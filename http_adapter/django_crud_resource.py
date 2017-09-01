@@ -1,10 +1,11 @@
 from django.views import View
+
 from http_adapter.default_http_response_builder import \
     DefaultHttpResponseBuilder
 from http_adapter.default_rip_action_resolver import DefaultRipActionResolver
 from http_adapter.default_rip_request_builder import DefaultRipRequestBuilder
-from model_adapter.crud_repo import ModelRepo
 from model_adapter.model_data_manager import ModelDataManager
+from model_adapter.model_repo import ModelRepo
 from rip.crud.crud_resource import CrudResource, CustomDataMixin
 from rip.generic_steps import error_types
 from rip.response import Response
@@ -13,8 +14,6 @@ from rip.schema_fields.integer_field import IntegerField
 
 
 class DjangoResource(View, CrudResource):
-    # todo: override the EntityActions to allow fetching Data from Models
-
     # resource_name is used by the router to construct the url name when
     # adding to urls `{resource_name}-detail`, `{resource_name}-list` and
     # `{resource_name}-aggregates` will be the url names.
@@ -24,6 +23,7 @@ class DjangoResource(View, CrudResource):
         http_response_builder_cls = DefaultHttpResponseBuilder
         rip_request_builder_cls = DefaultRipRequestBuilder
         rip_action_resolver_cls = DefaultRipActionResolver
+        detail_identifier = 'id'
 
     def __init__(self, **kwargs):
         View.__init__(self, **kwargs)
@@ -41,7 +41,8 @@ class DjangoResource(View, CrudResource):
         """
         url_type = url_kwargs.pop('url_type', None)
         action_resolver = self.get_meta().rip_action_resolver_cls(
-            http_request, url_type, url_kwargs)
+            http_request, url_type, url_kwargs,
+            resource_detail_identifier=self.get_meta().detail_identifier)
         action_name = action_resolver.get_action_name()
 
         rip_request_builder = self.get_meta().rip_request_builder_cls(

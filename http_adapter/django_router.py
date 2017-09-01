@@ -24,21 +24,28 @@ class DefaultRouter(object):
             registered at the url_pattern
         :return: None
         """
-
-        url_pattern = url_pattern or resource_cls.resource_name
+        resource_name = resource_cls.get_meta().resource_name
+        url_pattern = url_pattern or resource_name
 
         full_url_pattern = self._get_full_url_pattern(url_pattern)
+        detail_identifier_str = '{%s}' % \
+                                resource_cls.get_meta().detail_identifier
+        if detail_identifier_str in full_url_pattern:
+            raise ValueError(
+                '%s will be added to the url pattern automatically. '
+                'Please provide a pattern without a %s parameter' % (
+                    detail_identifier_str, detail_identifier_str))
         if full_url_pattern in self.registry:
             raise ValueError(
                 "`url_pattern` {url_pattern} already registered for "
                 "`resource_cls` {resource_cls}".format(
                     url_pattern=url_pattern,
                     resource_cls=resource_cls.__name__))
-        if resource_cls.resource_name in self.name_registry:
+        if resource_name in self.name_registry:
             raise ValueError(
                 "Another resource with `resource_name` {resource_name} already "
                 "registered on this router".format(
-                    resource_name=resource_cls.resource_name))
+                    resource_name=resource_name))
         if resource_cls in self.registry.values():
             raise ValueError(
                 "`resource_cls` {resource_cls} "
@@ -53,7 +60,7 @@ class DefaultRouter(object):
                     resource_cls=resource_cls.__name__))
 
         self.registry[full_url_pattern] = resource_cls
-        self.name_registry[resource_cls.resource_name] = resource_cls
+        self.name_registry[resource_name] = resource_cls
 
     @property
     def urls(self):
