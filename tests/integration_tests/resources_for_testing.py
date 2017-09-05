@@ -79,7 +79,7 @@ class FriendSubResource(DjangoResource):
     class Meta:
         resource_name = 'friend'
         detail_identifier = 'name'
-        filter_by_fields = {'relationship_type': (EQUALS,), 'person_id': (EQUALS,)}
+        filter_by_fields = {'relationship_type': (EQUALS,)}
         allowed_actions = crud_actions.ALL_ACTIONS
         data_manager_cls = FriendDataManager
 

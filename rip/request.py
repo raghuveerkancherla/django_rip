@@ -6,9 +6,14 @@ class Request(object):
     """
 
     def __init__(self, user, request_params, data=None, context_params=None,
-                 request_headers=None, request_body=None):
+                 request_headers=None, request_body=None,
+                 request_get_params=None, url_kwargs=None):
+
         self.user = user or None
         self.request_params = request_params or {}
+        # request_params = request_get_params + url_kwargs
+        self.request_get_params = request_get_params or {}
+        self.url_kwargs = url_kwargs or {}
         self.data = data or {}
         self.request_headers = request_headers or {}
         self.request_body = request_body

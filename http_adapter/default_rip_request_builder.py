@@ -17,15 +17,13 @@ class DefaultRipRequestBuilder(object):
         self.url_kwargs = url_kwargs
         self.http_request = http_request
 
-    def _build_request_params(self):
+    def _build_request_get_params(self):
         request_params = {}
         for key in self.http_request.GET:
             value = self.http_request.GET.getlist(key)
             if len(value) == 1:
                 value = value[0]
             request_params[key] = value
-
-        request_params.update(self.url_kwargs)
         return request_params
 
     def _resolve_user(self):
@@ -50,9 +48,15 @@ class DefaultRipRequestBuilder(object):
             return Response(is_success=False, reason=error_types.InvalidData,
                             data={'error_message': 'Invalid JSON data'})
 
+        request_get_params = self._build_request_get_params()
+        request_params = {}
+        request_params.update(request_get_params)
+        request_params.update(self.url_kwargs)
         return Request(
             user=self._resolve_user(),
-            request_params=self._build_request_params(),
+            request_params=request_params,
+            request_get_params=request_get_params,
+            url_kwargs=self.url_kwargs,
             context_params={'protocol': 'http',
                             'timezone': conf.settings.TIME_ZONE,
                             },

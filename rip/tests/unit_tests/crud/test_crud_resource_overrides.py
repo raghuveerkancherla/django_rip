@@ -121,8 +121,10 @@ class TestCrudResourceOverrides(unittest.TestCase):
         update_entity.assert_called_once_with(request, entity, **data)
 
     def test_get_aggregates_override(self):
+        request_params = {'aggregate_by': 'boolean', 'name': 1}
         request = Request(user=MagicMock(),
-                          request_params={'aggregate_by': 'boolean', 'name': 1})
+                          request_params=request_params,
+                          request_get_params=request_params)
         aggregates = [dict(boolean=True, count=2), dict(boolean=False, count=3)]
 
         self.TestResource.get_aggregates = get_aggregates_fn = \

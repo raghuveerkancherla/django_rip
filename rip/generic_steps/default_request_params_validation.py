@@ -70,17 +70,17 @@ class DefaultRequestParamsValidation(object):
         return None
 
     def validate_request_params(self, request):
-        request_params = request.request_params
+        request_get_params = request.request_get_params
         crud_action = request.context_params['crud_action']
-        validation_errors = self._validate_fields(request_params)
+        validation_errors = self._validate_fields(request_get_params)
         if validation_errors is None and crud_action == CrudActions.READ_LIST:
-            validation_errors = self.validate_order_by(request_params)
+            validation_errors = self.validate_order_by(request_get_params)
         if validation_errors is None and \
                 crud_action == CrudActions.GET_AGGREGATES:
-            validation_errors = self.validate_aggregate_by(request_params)
+            validation_errors = self.validate_aggregate_by(request_get_params)
         if validation_errors is None and crud_action == CrudActions.READ_LIST:
-            validation_errors = self.validate_limit(request_params) or \
-                                self.validate_offset(request_params)
+            validation_errors = self.validate_limit(request_get_params) or \
+                                self.validate_offset(request_get_params)
 
         if validation_errors:
             return Response(is_success=False,

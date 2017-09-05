@@ -112,6 +112,7 @@ class CrudResource(ResourceSchemaMixin):
     def get_read_detail_pipeline(self):
         read_detail_pipeline = [
             self.request_authentication.authenticate,
+            self.request_params_validation.validate_request_params,
             self.request_cleaner.clean_data_for_read_detail,
             partial(self.data_manager.read_detail,
                     get_entity_fn=getattr(self, 'get_entity', None)),
