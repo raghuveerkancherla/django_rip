@@ -3,4 +3,4 @@ from rip.schema_fields.base_field import \
 
 
 class IntegerField(BaseField):
-    field_type = int
+    data_type = int

@@ -33,10 +33,15 @@ class DefaultRequestCleaner(object):
             if field_obj is not None:
                 if isinstance(value, list) and not isinstance(field_obj,
                                                               ListField):
+                    # happens when multiple values are specified
+                    # for the same get parameter
                     cleaned_field_value = [field_obj.clean(request, val_item)
                                            for val_item in value]
                 elif isinstance(field_obj, ListField):
-                    cleaned_field_value = field_obj.clean(request, value) if isinstance(value, list) else [value]
+                    value_to_clean = value \
+                        if isinstance(value, list) else [value]
+                    cleaned_field_value = field_obj.clean(
+                        request, value_to_clean)
                 else:
                     cleaned_field_value = field_obj.clean(request, value)
                 break

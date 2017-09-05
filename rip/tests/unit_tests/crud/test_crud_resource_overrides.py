@@ -75,8 +75,9 @@ class TestCrudResourceOverrides(unittest.TestCase):
         assert response.is_success
         assert response.data['objects'] == [entity]
         assert response.data['meta']['total'] == total
-        get_list_fn.assert_called_once_with(request, limit=20, offset=0, name=1)
-        get_total_fn.assert_called_once_with(request, name=1)
+        get_list_fn.assert_called_once_with(request, limit=20,
+                                            offset=0, name='1')
+        get_total_fn.assert_called_once_with(request, name='1')
 
     def test_delete_entity_override(self):
         request = Request(user=MagicMock(), request_params={})
@@ -135,5 +136,5 @@ class TestCrudResourceOverrides(unittest.TestCase):
             CrudActions.GET_AGGREGATES, request)
 
         get_aggregates_fn.assert_called_once_with(
-            request, aggregate_by=['boolean'], name=1)
+            request, aggregate_by=['boolean'], name='1')
         assert response.data == aggregates

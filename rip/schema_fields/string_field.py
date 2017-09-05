@@ -8,7 +8,7 @@ from rip.schema_fields.validation_result import \
 
 
 class StringField(BaseField):
-    field_type = unicode
+    data_type = unicode
 
     def __init__(
             self, max_length=256, required=False,

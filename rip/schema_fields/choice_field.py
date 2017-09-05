@@ -7,37 +7,15 @@ from rip.schema_fields.validation_result import ValidationResult
 
 
 class ChoiceField(BaseField):
-    """Restrict the value which is received.
-    """
+    data_type = (unicode, float, int)
+
     def __init__(self, choices, entity_attribute=None, required=False,
                  field_type=FieldTypes.DEFAULT):
         """Pass list of allowed values.
 
         :param choices: `list` or `tuple` or `set` of values.
-
-        Usage:
-        -----
-        >>>choice_field = ChoiceField(choices=(1, 2))
-        >>>result = choice_field.validate(request=None, value=3)
-        >>>result.is_success
-        False
-
-        >>>result = choice_field.validate(request=None, value=1)
-        >>>result.is_success
-        True
-
-        >>>choice_field = ChoiceField(choices=[1, 2], required=True)
-        >>>from rip.schema_fields.default_field_value import DEFAULT_FIELD_VALUE
-        >>>result = choice_field.validate(request=None, value=DEFAULT_FIELD_VALUE)
-        >>>assert result.is_success
-        False
-        >>>result.reason
-        'This field is required'
-
-        >>>result = choice_field.validate(request=None, value=1)
-        >>>result.is_success
-        True
         """
+
         super(ChoiceField, self).__init__(
             required=required, field_type=field_type,
             entity_attribute=entity_attribute)

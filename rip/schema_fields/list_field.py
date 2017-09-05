@@ -7,6 +7,7 @@ from rip.schema_fields.validation_result import \
 
 
 class ListField(BaseField):
+    data_type = (list,)
     def __init__(self, field, required=False, field_type=FieldTypes.DEFAULT, \
                  nullable=True, show_in_list=True,
                  entity_attribute=None):
@@ -22,18 +23,9 @@ class ListField(BaseField):
 
     def validate(self, request, value):
         errors = []
-
         validation_result = super(ListField, self).validate(request, value)
-        if not validation_result.is_success:
+        if not validation_result.is_success or not isinstance(value, list):
             return validation_result
-
-        value = value if value not in (DEFAULT_FIELD_VALUE, None) else []
-        if self.nullable and value is None:
-            return ValidationResult(is_success=True)
-
-        if type(value) != list:
-            return ValidationResult(is_success=False,
-                                    reason="This field should be an array.")
 
         for item in value:
             validation_result = self.field.validate(request, item)

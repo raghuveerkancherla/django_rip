@@ -25,7 +25,7 @@ class TestValidateBooleanField(unittest.TestCase):
         result = field.validate(request=None, value='foo')
 
         assert not result.is_success
-        assert result.reason == 'Expected type Boolean'
+        assert result.reason == "Expected type ['bool']."
 
     def test_return_success_if_value_is_default(self):
         field = BooleanField()

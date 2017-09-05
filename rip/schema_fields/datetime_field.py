@@ -1,12 +1,13 @@
-import datetime
-
 from rip import datetime_converter
 from rip.schema_fields.base_field import \
     BaseField
 
 
 class DateTimeField(BaseField):
-    field_type = datetime.datetime
+    data_type = int
+
+    def get_message_for_type_error(self):
+        return "Expected a unicode timestamp."
 
     def serialize(self, request, value):
         if value is None:

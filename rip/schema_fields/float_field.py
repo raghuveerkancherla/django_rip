@@ -6,7 +6,7 @@ from rip.schema_fields.field_types import FieldTypes
 
 
 class FloatField(BaseField):
-    field_type = float
+    data_type = float
 
     def __init__(self, required=False, field_type=FieldTypes.DEFAULT,
                  nullable=True, entity_attribute=None, show_in_list=True,

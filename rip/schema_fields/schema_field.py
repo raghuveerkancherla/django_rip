@@ -14,6 +14,7 @@ from rip.schema_fields.validation_result import \
 
 
 class SchemaField(BaseField):
+    data_type = (dict,)
     """
     Use the schema of a Resource to represent (serialize / clean / validated)
     """

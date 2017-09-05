@@ -6,6 +6,7 @@ from rip.generic_steps.default_schema_validation import \
     DefaultSchemaValidation
 from rip.schema_fields.boolean_field import \
     BooleanField
+from rip.schema_fields.integer_field import IntegerField
 from rip.schema_fields.schema_field import SchemaField
 from rip.schema_fields.string_field import StringField
 from tests import request_factory
@@ -20,20 +21,22 @@ class TestSchemaFullValidation(unittest.TestCase):
 
         self.RelatedSchema = RelatedResource
 
-        class TestResource(CrudResource):
+        class UserResource(CrudResource):
             name = StringField(max_length=5, required=True)
             is_active = BooleanField(required=True)
             country = StringField(required=False, max_length=5)
+            age = IntegerField(required=False)
             related = SchemaField(of_type=self.RelatedSchema)
 
-        self.TestResource = TestResource
-        self.validation = DefaultSchemaValidation(resource=self.TestResource())
+        self.UserResource = UserResource
+        self.validation = DefaultSchemaValidation(resource=self.UserResource())
 
     def test_schema_validation_passes_with_all_fields(self):
         data = {
             'name': 'John',
             'is_active': True,
-            'country': 'India'
+            'country': 'India',
+            'age': 12
         }
         request = request_factory.get_request(
             data=data,
@@ -93,6 +96,32 @@ class TestSchemaFullValidation(unittest.TestCase):
 
         assert not response.is_success
         assert response.reason == error_types.InvalidData
+
+    def test_int_accepts_text_value(self):
+        data = {
+            'name': 'John',
+            'is_active': True,
+            'age': '32'
+        }
+        request = request_factory.get_request(
+            data=data,
+            context_params={'crud_action': CrudActions.UPDATE_DETAIL})
+        return_request = self.validation.validate_request_data(request)
+        assert return_request == request
+
+    def test_int_raises_for_non_int_values(self):
+        data = {
+            'name': 'John',
+            'is_active': 'asdf',
+            'age': 'wefasd'
+        }
+        request = request_factory.get_request(
+            data=data,
+            context_params={'crud_action': CrudActions.UPDATE_DETAIL})
+        response = self.validation.validate_request_data(request)
+
+        assert not response.is_success
+        assert {'age', 'is_active'} == set(response.data.keys())
 
 
 class TestSchemaPartialValidation(unittest.TestCase):
